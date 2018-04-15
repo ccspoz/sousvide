@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PID Controller Log</title>
+    <meta http-equiv="refresh" content="300">
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <!-- Load Jquery -->
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+    <!-- Make the chart -->
+    <script type="text/javascript">
+
+        // Load the Visualization API and the piechart package.
+        google.charts.load('current', {'packages':['corechart']});
+
+        // Set a callback to run when the Google Visualization API is loaded.
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+          var jsonData = $.ajax({
+              url: "PIDgetData.php",
+              dataType: "json", // type of data we're expecting from server
+              async: false // make true to avoid waiting for the request to be complete
+              });
+
+          // Create our data table out of JSON data loaded from server.
+          var data = new google.visualization.DataTable(jsonData.responseText);
+          
+          var date_formatter = new google.visualization.DateFormat({pattern: "MMM dd, HH:mm"}); 
+          date_formatter.format(data, 0);    
+          
+          var chart = new google.visualization.LineChart(
+            document.getElementById('chart_div'));
+
+              var options = {
+                title: 'PID Controller Datalog',
+                curveType: 'none',
+                chartArea: {left:50,top:40,width:'89%',height:'80%'},
+                legend: {position: 'none'},
+                explorer: {zoomDelta: 1.2,
+                           maxZoomIn: 0.1,
+                           maxZoomOut: 1.2},
+              };
+          
+          chart.draw(data, options);
+        };
+
+    </script>
+    
+    <script type="text/javascript">
+        $(document).ready(function(){
+            setInterval(drawChart, 300000);
+            });
+    </script>
+
+  </head>
+  <body>
+    <div id="chart_div" style="height: 800px;"></div>
+  </body>
+</html> 
