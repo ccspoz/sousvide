@@ -2,6 +2,7 @@ Notes on Hardware
 
 ---
 THIS HARDWARE USES MAINS VOLTAGE.
+
 Unqualified persons attempting to build this hardware may be at risk of LETHAL electric shock, starting fires, or otherwise damaging life or property.
 If you are not a licensed electrician it may also be illegal to build or use this device in your locale.
 It is YOUR responsibility to assess your skill level, qualifications, and local laws before attempting to build this hardware.
