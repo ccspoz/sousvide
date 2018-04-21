@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>PID Controller Log</title>
-    <meta http-equiv="refresh" content="300">
+    <meta http-equiv="refresh" content="60">
     <!--Load the AJAX API-->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <!-- Load Jquery -->
@@ -15,11 +15,123 @@
         google.charts.load('current', {'packages':['corechart']});
 
         // Set a callback to run when the Google Visualization API is loaded.
-        google.charts.setOnLoadCallback(drawChart);
+        google.charts.setOnLoadCallback(drawTempChart);
+        google.charts.setOnLoadCallback(drawDriveChart);
+        google.charts.setOnLoadCallback(drawPIDChart);
 
-        function drawChart() {
+        function drawTempChart() {
           var jsonData = $.ajax({
-              url: "PIDgetData.php",
+              url: "PIDgetTempData.php",
+              dataType: "json", // type of data we're expecting from server
+              async: false // make true to avoid waiting for the request to be complete
+              });
+
+          // Create our data table out of JSON data loaded from server.
+          var data = new google.visualization.DataTable(jsonData.responseText);
+          
+          var date_formatter = new google.visualization.DateFormat({pattern: "MMM dd, HH:mm"}); 
+          date_formatter.format(data, 0);    
+          
+          var degrees_formatter = new google.visualization.NumberFormat({pattern: '00.00\'\u00B0\'C'}); 
+          degrees_formatter.format(data, 1);
+          
+          var degrees_formatter = new google.visualization.NumberFormat({pattern: '00.00\'\u00B0\'C'}); 
+          degrees_formatter.format(data, 2);          
+          
+          var degrees_formatter = new google.visualization.NumberFormat({pattern: '00.00\'\u00B0\'C'}); 
+          degrees_formatter.format(data, 3);
+
+          var percent_formatter = new google.visualization.NumberFormat({pattern: '#\'%\''}); 
+          percent_formatter.format(data, 4);
+          
+          var chart = new google.visualization.LineChart(
+            document.getElementById('Temp_chart_div'));
+
+              var options = {
+                'title': 'Temperature',
+                'chartArea': {left:50,top:40,width:'89%',height:'80%'},
+                'height':300,
+                'legend': {position: 'top'},
+                'explorer': {zoomDelta: 1.2,
+                           maxZoomIn: 0.1,
+                           maxZoomOut: 1.2},
+                'series':{
+                    0: {targetAxisIndex:1},
+                    1: {targetAxisIndex:1},
+                    2: {targetAxisIndex:1},
+                    3: {targetAxisIndex:0},
+                },
+                'vAxes':{
+                    0:{
+                        format: '#\'%\'',
+                        maxValue: '100.0',
+                        minValue: '00.0',                        
+                    },
+                    1:{
+                        format: '00.0\'\u00B0\'C',
+                        maxValue: '36.5',
+                        minValue: '25.0',
+                    },
+                },
+                'interpolateNulls': 'False',
+              };
+          
+          chart.draw(data, options);
+        };
+        
+        
+        
+        function drawDriveChart() {
+          var jsonData = $.ajax({
+              url: "PIDgetDriveData.php",
+              dataType: "json", // type of data we're expecting from server
+              async: false // make true to avoid waiting for the request to be complete
+              });
+
+          // Create our data table out of JSON data loaded from server.
+          var data = new google.visualization.DataTable(jsonData.responseText);
+          
+          var date_formatter = new google.visualization.DateFormat({pattern: "MMM dd, HH:mm"}); 
+          date_formatter.format(data, 0);
+          
+          var degrees_formatter = new google.visualization.NumberFormat({pattern: '00.00\'\u00B0\'C'}); 
+          degrees_formatter.format(data, 1);
+          
+          var chart = new google.visualization.LineChart(
+            document.getElementById('Drive_chart_div'));
+
+              var options = {
+                'title': 'Controller I/O',
+                'legend':{position:'top'},
+                'chartArea': {left:50,top:40,width:'89%',height:'80%'},
+                'height':300,
+                'explorer': {zoomDelta: 1.2,
+                           maxZoomIn: 0.1,
+                           maxZoomOut: 1.2},
+                'series':{
+                    0: {targetAxisIndex:0},
+                    1: {targetAxisIndex:1},
+                    },
+                'vAxes':{
+                    0:{
+                        maxValue: '1.0',
+                        minValue: '-1.0',                        
+                    },
+                    1:{
+                        maxValue: '1023.0',
+                        minValue: '0.0',
+                    },
+                },
+              };
+          
+          chart.draw(data, options);
+        };
+        
+        
+        
+        function drawPIDChart() {
+          var jsonData = $.ajax({
+              url: "PIDgetPIDData.php",
               dataType: "json", // type of data we're expecting from server
               async: false // make true to avoid waiting for the request to be complete
               });
@@ -31,31 +143,52 @@
           date_formatter.format(data, 0);    
           
           var chart = new google.visualization.LineChart(
-            document.getElementById('chart_div'));
+            document.getElementById('PID_chart_div'));
 
               var options = {
-                title: 'PID Controller Datalog',
-                curveType: 'none',
-                chartArea: {left:50,top:40,width:'89%',height:'80%'},
-                legend: {position: 'none'},
-                explorer: {zoomDelta: 1.2,
+                'title': 'Controller Output (Component Values)',
+                'legend':{position:'top'},
+                'chartArea': {left:50,top:40,width:'89%',height:'80%'},
+                'height':300,
+                'explorer': {zoomDelta: 1.2,
                            maxZoomIn: 0.1,
                            maxZoomOut: 1.2},
+                'series':{
+                    0: {targetAxisIndex:0},
+                    1: {targetAxisIndex:0},
+                    2: {targetAxisIndex:0},
+                },
+                vAxes:{
+                    0:{
+                        maxValue: '30.0',
+                        minValue: '-30.0',                        
+                    },
+                    1:{
+                        maxValue: '30.0',
+                        minValue: '-304.0',
+                    },
+                },
               };
           
           chart.draw(data, options);
         };
 
     </script>
-    
-    <script type="text/javascript">
-        $(document).ready(function(){
-            setInterval(drawChart, 300000);
-            });
-    </script>
 
   </head>
   <body>
-    <div id="chart_div" style="height: 800px;"></div>
+    <div id="Temp_chart_div"></div>
+    <div id="Drive_chart_div"></div>
+    <div id="PID_chart_div"></div>
+    <br>
+    <form method="post" action="PID_log_download.php">
+    Filename:<input type="text" name='filename' value='PIDlog'></input>
+    <input type="submit" name="download" value='Download CSV'></input>
+    </form>
+    <br>
+    <form method="post" action="PID_truncate_table.php">
+    <input type="password" name="password">
+    <input type="submit" id='delete' name="delete" value='Truncate Log Table'></input>
+    </form>
   </body>
 </html> 
