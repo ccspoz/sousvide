@@ -1,0 +1,1 @@
+<?php echo md5('?Gd$w9U='.sha1('kRw+3+$D'."password_to_hash"));?>
