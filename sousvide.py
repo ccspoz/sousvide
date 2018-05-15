@@ -44,6 +44,7 @@ sensor.convert_temp()
 setpoint = 56.0
 PID = PID.PID(220,0.3,2500,1023) #Create simple PID object with saturation value of 1023
 sleep_time = 20  #Control loop interval (seconds)
+PID_Loop()
 
 def PID_Loop():
     print('{0:>10}{1:>10}{2:>10}{3:>7}{4:>10}{5:>10}{6:>10}'.format('TEMP', 'ERROR', 'DRIVE', 'DUTY', 'P', 'I', 'D'))
