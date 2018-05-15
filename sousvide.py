@@ -26,6 +26,7 @@ def get_temp():
         temp = sensor.read_temp(rom)
     except:
         #If sensor read fails, use a sentinel value so control loop continues but the error is obvious on the graph
+        #To fail SAFE the sentinel value must be higher than the setpoint, so that the heater is gradually turned off with failed reads
         temp = 123.45
     return temp
 
