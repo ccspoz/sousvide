@@ -18,3 +18,5 @@ In the absense of knowledge of local codes, a minimum 5mm creepage distance betw
 
 As heating elements will vary, NO ALLOWANCE is made in the schematics for fuses and proper earthing but they are ASSUMED to be present.
 If you do not understand how to implement these safety considerations on your own, you should NOT attempt to build this circuit without assistance from a qualified person.
+
+All resistors are 1/4W. Value of R1 has been changed from 1.5K to 360R. This allows a higher current to flow momentarily which turns the triac on faster and reduces power dissipation in the gate. Reducing R1 below 200R might overload the optocoupler.
